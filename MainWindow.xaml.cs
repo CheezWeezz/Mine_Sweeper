@@ -17,15 +17,31 @@ namespace MineSeeperProject
     public partial class MainWindow : Window
     {
         private bool[,] mineField;
+        GameLogic gmL = new GameLogic();
+        InterfaceHandling appL = new InterfaceHandling();
+
         public MainWindow()
         {
-            GameLogic gmL = new GameLogic();
-            AppLogic appL = new AppLogic();
             mineField = new bool[8, 8];
             InitializeComponent();
+
+            //Make the grid
+            boardGrid.Children.Add(appL.BoardSetup(mineField.GetLength(0), mineField.GetLength(1)));
+            //Put the mines on the board
             gmL.BoardInit(mineField, 0);
-            boardGrid.Children.Add(appL.BoardSetup(8, 8))
-            ;
+            //She the numbers on the board
+            AddNumbersToBoard(mineField);
+        }
+
+        private void AddNumbersToBoard(bool[,] board)
+        {
+            for (int r = 0; r < board.GetLength(0); r++)
+            {
+                for (int c = 0; c < board.GetLength(1); c++)
+                {
+                    appL.ModifyButtonContent(boardGrid,r,c,gmL.MineRadar(board,r,c).ToString());
+                }
+            }
         }
     }
 }

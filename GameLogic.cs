@@ -39,4 +39,23 @@ public class GameLogic
             }
         }
 	}
+
+    public int MineRadar(bool[,] board, int row, int col)
+    {
+        int count = 0;
+        for (int r = row - 1; r <= row + 1; r++)
+        {
+            for (int c = col - 1; c <= col + 1; c++)
+            {
+                if (r >= 0 && r < board.GetLength(0) && c >= 0 && c < board.GetLength(1))
+                {
+                    if (board[r, c])
+                    {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
 }

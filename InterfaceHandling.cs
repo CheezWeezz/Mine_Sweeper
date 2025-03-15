@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media;
 
-public class AppLogic
+public class InterfaceHandling
 {
     private const int CellSize = 35;
     private const int rowHeight = CellSize;
@@ -52,6 +52,30 @@ public class AppLogic
             int column = tag.Item2;  // Column value
 
             clickedButton.Background = new SolidColorBrush(Colors.Cyan);
+        }
+    }
+
+    /// <summary>
+    /// Modify the content of a button in the grid
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="column"></param>
+    /// <param name="newContent"></param>
+    public void ModifyButtonContent(Grid bGrid, int row, int column, string newContent)
+    {
+        foreach (var child in bGrid.Children)
+        {
+            if (child is Grid grid)
+            {
+                var button = grid.Children
+                    .OfType<Button>()
+                    .FirstOrDefault(b => Grid.GetRow(b) == row && Grid.GetColumn(b) == column);
+
+                if (button != null)
+                {
+                    button.Content = newContent;
+                }
+            }
         }
     }
 }
