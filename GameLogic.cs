@@ -5,6 +5,7 @@ using System.Windows.Media.Animation;
 
 public class GameLogic
 {
+    public static bool m_MineCheck = false;
     private readonly int[] lvl = { 10, 40, 99 };
 
     /// <summary>
@@ -40,6 +41,13 @@ public class GameLogic
         }
 	}
 
+    /// <summary>
+    /// Look for mine arround the Selected index
+    /// </summary>
+    /// <param name="board"></param>
+    /// <param name="row"></param>
+    /// <param name="col"></param>
+    /// <returns></returns>
     public int MineRadar(bool[,] board, int row, int col)
     {
         int count = 0;
@@ -57,5 +65,24 @@ public class GameLogic
             }
         }
         return count;
+    }
+    /// <summary>
+    /// Check if a mine as been clicked
+    /// </summary>
+    /// <param name="board"></param>
+    public bool GameOverCheck(bool[,] board)
+    {
+        int row = InterfaceHandling.m_currentCellRow;
+        int col = InterfaceHandling.m_currentCellCol;
+
+        if (m_MineCheck == true)
+        {
+            if (board[row,col])
+            {
+                return true;
+            }
+            m_MineCheck = false;
+        }
+        return false;
     }
 }

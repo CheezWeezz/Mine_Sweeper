@@ -2,61 +2,16 @@
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media;
+using MineSeeperProject;
+using System.Data.Common;
 
 public class InterfaceHandling
 {
-    private const int CellSize = 35;
-    private const int rowHeight = CellSize;
-    private const int colWidth = CellSize;
+    public static int m_currentCellRow = 0;
+    public static int m_currentCellCol = 0;
 
     /// <summary>
-    /// Create a grid with buttons for a game board
-    /// </summary>
-    /// <param name="bRow"></param>
-    /// <param name="bCol"></param>
-    /// <returns></returns>
-    public Grid BoardSetup(int bRow, int bCol)
-    {
-        Grid bGrid = new Grid();
-        for (int r = 0; r < bRow; r++)
-        {
-            bGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(rowHeight) });
-            for (int c = 0; c < bCol; c++)
-            {
-                bGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(colWidth) });
-                Button btn = new Button{
-                    Content = $"Btn {r},{c}",
-                    Name = $"btn_{r}_{c}"
-                };
-                Grid.SetRow(btn, r);
-                Grid.SetColumn(btn, c);
-                btn.Tag = new Tuple<int, int>(r, c);
-                btn.Click += Button_Click;
-                bGrid.Children.Add(btn);
-            }
-        }
-        return bGrid;
-    }
-
-    /// <summary>
-    /// Button click event handler
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        Button clickedButton = sender as Button;
-        var tag = clickedButton.Tag as Tuple<int, int>;
-        {
-            int row = tag.Item1;  // Row value
-            int column = tag.Item2;  // Column value
-
-            clickedButton.Background = new SolidColorBrush(Colors.Cyan);
-        }
-    }
-
-    /// <summary>
-    /// Modify the content of a button in the grid
+    /// Modify the Content of a Button in the Grid
     /// </summary>
     /// <param name="row"></param>
     /// <param name="column"></param>
@@ -74,6 +29,50 @@ public class InterfaceHandling
                 if (button != null)
                 {
                     button.Content = newContent;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Disable a Cell in the Grid
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="column"></param>
+    /// <param name="newContent"></param>
+    public void DisableButton(Grid bGrid, int row, int column)
+    {
+        foreach (var child in bGrid.Children)
+        {
+            if (child is Grid grid)
+            {
+                var button = grid.Children
+                    .OfType<Button>()
+                    .FirstOrDefault(b => Grid.GetRow(b) == row && Grid.GetColumn(b) == column);
+
+                if (button != null)
+                {
+                    button.IsEnabled = false;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// End the Game
+    /// </summary>
+    /// <param name="bGrid"></param>
+    /// <param name="board"></param>
+    /// <param name="mineCheck"></param>
+    public void EndGame(Grid bGrid, bool[,] board, bool mineCheck)
+    {
+        if (mineCheck)
+        {
+            for (int row = 0; row < board.GetLength(0); row++)
+            {
+                for (int col = 0; col < board.GetLength(1); col++)
+                {
+                    DisableButton(bGrid, row, col);
                 }
             }
         }
