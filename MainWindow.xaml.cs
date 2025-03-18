@@ -34,7 +34,32 @@ namespace MineSeeperProject
             //Put the mines on the board
             gmL.BoardInit(mineField, 0);
             //She the numbers on the board
-            //AddNumbersToBoard(mineField);
+            AddNumbersToBoard(mineField);
+        }
+
+        /// <summary>
+        /// Button click event handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Button clickedButton = sender as Button;
+            var tag = clickedButton.Tag as Tuple<int, int>;
+            if (tag != null)
+            {
+                int row = tag.Item1;
+                int col = tag.Item2;
+                //updating my world variable
+                InterfaceHandling.m_currentCellRow = tag.Item1;  // Row value
+                InterfaceHandling.m_currentCellCol = tag.Item2;  // Column value
+                GameLogic.m_MineCheck = true;
+                appL.EndGame(boardGrid, mineField, gmL.GameOverCheck(mineField));
+
+                gmL.CellWithZeros(gmL.MineRadar(mineField, row,col), row, col, mineField, boardGrid);
+
+                clickedButton.Background = new SolidColorBrush(Colors.Cyan);
+            }
         }
 
         /// <summary>
@@ -42,7 +67,7 @@ namespace MineSeeperProject
         /// </summary>
         /// <param name="bRow"></param>
         /// <param name="bCol"></param>
-        /// <returns></returns>
+        /// <returns>Grid</returns>
         public Grid BoardSetup(int bRow, int bCol)
         {
             Grid bGrid = new Grid();
@@ -64,27 +89,6 @@ namespace MineSeeperProject
                 }
             }
             return bGrid;
-        }
-
-        /// <summary>
-        /// Button click event handler
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Button clickedButton = sender as Button;
-            var tag = clickedButton.Tag as Tuple<int, int>;
-            if (tag != null)
-            {
-                //updating my world variable
-                InterfaceHandling.m_currentCellRow = tag.Item1;  // Row value
-                InterfaceHandling.m_currentCellCol = tag.Item2;  // Column value
-                GameLogic.m_MineCheck = true;
-                appL.EndGame(boardGrid,mineField,gmL.GameOverCheck(mineField));
-
-                clickedButton.Background = new SolidColorBrush(Colors.Cyan);
-            }
         }
 
         /// <summary>

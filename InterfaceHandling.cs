@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 using MineSeeperProject;
 using System.Data.Common;
+using System.Windows.Navigation;
 
 public class InterfaceHandling
 {
@@ -76,5 +77,31 @@ public class InterfaceHandling
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Return a Button Object
+    /// </summary>
+    /// <param name="bGrid"></param>
+    /// <param name="Row"></param>
+    /// <param name="Column"></param>
+    /// <returns>Button</returns>
+    public Button FindButton(Grid bGrid, int row, int column)
+    {
+        foreach (var child in bGrid.Children)
+        {
+            if (child is Grid grid)
+            {
+                var button = grid.Children
+                    .OfType<Button>()
+                    .FirstOrDefault(b => Grid.GetRow(b) == row && Grid.GetColumn(b) == column);
+
+                if (button != null)
+                {
+                    return button;
+                }
+            }
+        }
+        return null;
     }
 }

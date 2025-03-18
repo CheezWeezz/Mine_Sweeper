@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Web;
+using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
 public class GameLogic
@@ -47,7 +48,7 @@ public class GameLogic
     /// <param name="board"></param>
     /// <param name="row"></param>
     /// <param name="col"></param>
-    /// <returns></returns>
+    /// <returns>Int</returns>
     public int MineRadar(bool[,] board, int row, int col)
     {
         int count = 0;
@@ -66,6 +67,39 @@ public class GameLogic
         }
         return count;
     }
+
+    ////// <summary>
+    /// Check Adjacent 0's
+    /// </summary>
+    /// <param name="Count"></param>
+    /// <param name="Row"></param>
+    /// <param name="Col"></param>
+    /// <param name="board"></param>
+    /// <param name="bGrid"></param>
+    public void CellWithZeros(int count, int row, int col, bool[,] board, Grid bGrid)
+    {
+        InterfaceHandling iH = new InterfaceHandling();
+
+        for (int r = row - 1; r <= row + 1; r++)
+        {
+            for (int c = col - 1; c <= col + 1; c++)
+            {
+                Button currentbtn = iH.FindButton(bGrid, r, c);
+                if (currentbtn != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Checking: {currentbtn.GetType()}");
+                    System.Diagnostics.Debug.WriteLine("Count: " + MineRadar(board, r, c));
+                    System.Diagnostics.Debug.WriteLine($"Checking: {currentbtn.IsEnabled}");
+                    if (MineRadar(board, r, c) == 0 && currentbtn.IsEnabled == true)
+                    {
+                        iH.DisableButton(bGrid, r, c);
+                        CellWithZeros(count, r, c, board, bGrid);
+                    }
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Check if a mine as been clicked
     /// </summary>
@@ -84,5 +118,59 @@ public class GameLogic
             m_MineCheck = false;
         }
         return false;
+    }
+
+    /// <summary>
+    /// Utility function a Row, Starting from any direction a 1 range
+    /// </summary>
+    /// <param name="Direction"></param>
+    /// <param name="Row"></param>
+    /// <returns>Int</returns>
+    public int NextCellRow(int dir, int row)
+    {
+        switch (dir)
+        {
+            case 1:
+            case 2:
+            case 3: 
+                return row - 1;
+            case 4:
+            case 5:
+            case 6: 
+                return row;
+            case 7:
+            case 8: 
+            case 9: 
+                return row + 1;
+
+        }
+        return row;
+    }
+
+    /// <summary>
+    /// Utility function a col, Starting from any direction a 1 range
+    /// </summary>
+    /// <param name="Direction"></param>
+    /// <param name="Col"></param>
+    /// <returns>Int</returns>
+    public int NextCellCol(int dir, int col)
+    {
+        switch (dir)
+        {
+            case 1:
+            case 2:
+            case 3: 
+                return col - 1;
+            case 4:
+            case 5:
+            case 6: 
+                return col;
+            case 7:
+            case 8:
+            case 9: 
+                return col + 1;
+
+        }
+        return col;
     }
 }
