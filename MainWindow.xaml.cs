@@ -34,7 +34,7 @@ namespace MineSeeperProject
             //Put the mines on the board
             gmL.BoardInit(mineField, 0);
             //She the numbers on the board
-            AddNumbersToBoard(mineField);
+            //AddNumbersToBoard(mineField);
         }
 
         /// <summary>
@@ -58,9 +58,10 @@ namespace MineSeeperProject
 
                 if (gmL.MineRadar(mineField, row, col) == 0)
                 {
-                    gmL.CellWithZeros(gmL.MineRadar(mineField, row, col), row, col, mineField, boardGrid);
+                    CellWithZeros(gmL.MineRadar(mineField, row, col), row, col, mineField, boardGrid);
                 }
                 RevealNumbersAround(boardGrid,mineField,row,col);
+                appL.DisableButton(boardGrid,row,col);
             }
         }
 
@@ -122,10 +123,39 @@ namespace MineSeeperProject
                 for (int c = col - 1; c <= col + 1; c++)
                 {
                     Button btn  = appL.FindButton(bGrid, r, c);
-                    if (btn != null && gmL.MineRadar(board, r, c) != 0)
+                    if (btn != null)
                     {
-                        btn.Content = gmL.MineRadar(board, r, c);
-                        btn.Background = new SolidColorBrush(Colors.Cyan);
+                        btn.Content = gmL.MineRadar(board, r, c).ToString();
+                    }
+                }
+            }
+        }
+
+        ////// <summary>
+        /// Check Adjacent 0's
+        /// </summary>
+        /// <param name="Count"></param>
+        /// <param name="Row"></param>
+        /// <param name="Col"></param>
+        /// <param name="board"></param>
+        /// <param name="bGrid"></param>
+        public void CellWithZeros(int count, int row, int col, bool[,] board, Grid bGrid)
+        {
+
+            for (int r = row - 1; r <= row + 1; r++)
+            {
+                for (int c = col - 1; c <= col + 1; c++)
+                {
+                    Button currentbtn = appL.FindButton(bGrid, r, c);
+                    if (currentbtn != null)
+                    {
+                        if (gmL.MineRadar(board, r, c) == 0 && currentbtn.IsEnabled == true)
+                        {
+                            currentbtn.Content = gmL.MineRadar(board, r, c).ToString();
+                            RevealNumbersAround(boardGrid,mineField,r,c);
+                            appL.DisableButton(bGrid, r, c);
+                            CellWithZeros(count, r, c, board, bGrid);
+                        }
                     }
                 }
             }

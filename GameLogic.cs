@@ -68,35 +68,6 @@ public class GameLogic
         return count;
     }
 
-    ////// <summary>
-    /// Check Adjacent 0's
-    /// </summary>
-    /// <param name="Count"></param>
-    /// <param name="Row"></param>
-    /// <param name="Col"></param>
-    /// <param name="board"></param>
-    /// <param name="bGrid"></param>
-    public void CellWithZeros(int count, int row, int col, bool[,] board, Grid bGrid)
-    {
-        InterfaceHandling iH = new InterfaceHandling();
-
-        for (int r = row - 1; r <= row + 1; r++)
-        {
-            for (int c = col - 1; c <= col + 1; c++)
-            {
-                Button currentbtn = iH.FindButton(bGrid, r, c);
-                if (currentbtn != null)
-                {
-                    if (MineRadar(board, r, c) == 0 && currentbtn.IsEnabled == true)
-                    {
-                        iH.DisableButton(bGrid, r, c);
-                        CellWithZeros(count, r, c, board, bGrid);
-                    }
-                }
-            }
-        }
-    }
-
     /// <summary>
     /// Check if a mine as been clicked
     /// </summary>
