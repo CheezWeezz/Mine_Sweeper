@@ -56,9 +56,11 @@ namespace MineSeeperProject
                 GameLogic.m_MineCheck = true;
                 appL.EndGame(boardGrid, mineField, gmL.GameOverCheck(mineField));
 
-                gmL.CellWithZeros(gmL.MineRadar(mineField, row,col), row, col, mineField, boardGrid);
-
-                clickedButton.Background = new SolidColorBrush(Colors.Cyan);
+                if (gmL.MineRadar(mineField, row, col) == 0)
+                {
+                    gmL.CellWithZeros(gmL.MineRadar(mineField, row, col), row, col, mineField, boardGrid);
+                }
+                RevealNumbersAround(boardGrid,mineField,row,col);
             }
         }
 
@@ -102,6 +104,29 @@ namespace MineSeeperProject
                 for (int c = 0; c < board.GetLength(1); c++)
                 {
                     appL.ModifyButtonContent(boardGrid,r,c,gmL.MineRadar(board,r,c).ToString());
+                }
+            }
+        }
+
+        /// <summary>
+        /// Look for mine arround the Selected index
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns>Int</returns>
+        public void RevealNumbersAround(Grid bGrid, bool[,] board, int row, int col)
+        {
+            for (int r = row - 1; r <= row + 1; r++)
+            {
+                for (int c = col - 1; c <= col + 1; c++)
+                {
+                    Button btn  = appL.FindButton(bGrid, r, c);
+                    if (btn != null && gmL.MineRadar(board, r, c) != 0)
+                    {
+                        btn.Content = gmL.MineRadar(board, r, c);
+                        btn.Background = new SolidColorBrush(Colors.Cyan);
+                    }
                 }
             }
         }

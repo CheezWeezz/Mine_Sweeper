@@ -58,7 +58,7 @@ public class GameLogic
             {
                 if (r >= 0 && r < board.GetLength(0) && c >= 0 && c < board.GetLength(1))
                 {
-                    if (board[r, c])
+                    if (board[r, c] == true)
                     {
                         count++;
                     }
@@ -87,9 +87,6 @@ public class GameLogic
                 Button currentbtn = iH.FindButton(bGrid, r, c);
                 if (currentbtn != null)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Checking: {currentbtn.GetType()}");
-                    System.Diagnostics.Debug.WriteLine("Count: " + MineRadar(board, r, c));
-                    System.Diagnostics.Debug.WriteLine($"Checking: {currentbtn.IsEnabled}");
                     if (MineRadar(board, r, c) == 0 && currentbtn.IsEnabled == true)
                     {
                         iH.DisableButton(bGrid, r, c);
