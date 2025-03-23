@@ -104,4 +104,29 @@ public class InterfaceHandling
         }
         return null;
     }
+
+    /// <summary>
+    /// Check for disable cells arround
+    /// </summary>
+    /// <param name="bGrid"></param>
+    /// <param name="row"></param>
+    /// <param name="col"></param>
+    /// <returns>bool</returns>
+    public bool IsArroundDisable(Grid bGrid, int row, int col)
+    {
+        for (int r = row-1; r < row+1; r++)
+        {
+            for (int c = col - 1; c < col + 1; c++)
+            {
+                Button btn = FindButton(bGrid, r, c);
+
+                if (btn != null && !btn.IsEnabled && r != row && c != col)
+                {
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
 }

@@ -22,25 +22,20 @@ public class GameLogic
         //Picking random locations for mines
         for (int i = 0; i < lvl[difLevel]; i++)
 		{
-			mines[i] = rdm.Next(board.GetLength(0)* board.GetLength(1));
+			mines[i] = rdm.Next(board.GetLength(0) * board.GetLength(1));
 		}
+        Array.Sort(mines);
 
         //Placing mines on the board
-        for (int row = 0; row < board.GetLength(0); row++)
-		{
-            for (int col = 0; col < board.GetLength(1); col++)
-            {
-                int currentTile = row * col;
-                for (int i = 0; i < mines.Length; i++)
-                {
-                    if (currentTile == mines[i])
-                    {
-                        board[row, col] = true;
-                    }
-                }
-            }
+        for (int i = 0; i < mines.Length; i++)
+        {
+            int row = mines[i] / 8;
+            int col = mines[i] - (row * 8);
+            board[row, col] = true;
         }
-	}
+        ;
+
+    }
 
     /// <summary>
     /// Look for mine arround the Selected index
@@ -86,59 +81,5 @@ public class GameLogic
             m_MineCheck = false;
         }
         return false;
-    }
-
-    /// <summary>
-    /// Utility function a Row, Starting from any direction a 1 range
-    /// </summary>
-    /// <param name="Direction"></param>
-    /// <param name="Row"></param>
-    /// <returns>Int</returns>
-    public int NextCellRow(int dir, int row)
-    {
-        switch (dir)
-        {
-            case 1:
-            case 2:
-            case 3: 
-                return row - 1;
-            case 4:
-            case 5:
-            case 6: 
-                return row;
-            case 7:
-            case 8: 
-            case 9: 
-                return row + 1;
-
-        }
-        return row;
-    }
-
-    /// <summary>
-    /// Utility function a col, Starting from any direction a 1 range
-    /// </summary>
-    /// <param name="Direction"></param>
-    /// <param name="Col"></param>
-    /// <returns>Int</returns>
-    public int NextCellCol(int dir, int col)
-    {
-        switch (dir)
-        {
-            case 1:
-            case 2:
-            case 3: 
-                return col - 1;
-            case 4:
-            case 5:
-            case 6: 
-                return col;
-            case 7:
-            case 8:
-            case 9: 
-                return col + 1;
-
-        }
-        return col;
     }
 }

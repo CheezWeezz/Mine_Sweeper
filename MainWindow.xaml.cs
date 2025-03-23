@@ -4,7 +4,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Drawing;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -16,6 +18,8 @@ namespace MineSeeperProject
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string flagIcon = "Images\\flag.png";
+
         GameLogic gmL = new GameLogic();
         InterfaceHandling appL = new InterfaceHandling();
 
@@ -23,25 +27,20 @@ namespace MineSeeperProject
         private const int rowHeight = CellSize;
         private const int colWidth = CellSize;
         private bool[,] mineField;
+        public static int mineCountDisc;
 
         public MainWindow()
         {
             mineField = new bool[8, 8];
+            mineCountDisc = 0;
             InitializeComponent();
 
             //Make the grid
             boardGrid.Children.Add(BoardSetup(mineField.GetLength(0), mineField.GetLength(1)));
             //Put the mines on the board
             gmL.BoardInit(mineField, 0);
-            //She the numbers on the board
-            //AddNumbersToBoard(mineField);
         }
 
-        /// <summary>
-        /// Button click event handler
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Button clickedButton = sender as Button;
@@ -62,6 +61,41 @@ namespace MineSeeperProject
                 }
                 RevealNumbersAround(boardGrid,mineField,row,col);
                 appL.DisableButton(boardGrid,row,col);
+            }
+        }
+
+        public void Button_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                Button clickedButton = sender as Button;
+                var tag = clickedButton.Tag as Tuple<int, int>;
+                if (tag != null)
+                {
+                    int row = tag.Item1;
+                    int col = tag.Item2;
+
+                    Image img = new Image();
+                    img.Source = new BitmapImage(new Uri(flagIcon, UriKind.Relative));
+
+                    if (clickedButton.Content is Image)
+                    {
+                        if (appL.IsArroundDisable(boardGrid,row,col))
+                        {
+                            clickedButton.Content = gmL.MineRadar(mineField, row, col);
+                        }
+                        else
+                        {
+                            clickedButton.Content = "";
+                        }
+                        mineCountDisc--;
+                    }
+                    else
+                    {
+                        clickedButton.Content = img;
+                        mineCountDisc++;
+                    }
+                }
             }
         }
 
@@ -88,25 +122,11 @@ namespace MineSeeperProject
                     Grid.SetColumn(btn, c);
                     btn.Tag = new Tuple<int, int>(r, c);
                     btn.Click += Button_Click;
+                    btn.MouseDown += Button_MouseDown;
                     bGrid.Children.Add(btn);
                 }
             }
             return bGrid;
-        }
-
-        /// <summary>
-        /// Add the number to the board
-        /// </summary>
-        /// <param name="board"></param>
-        private void AddNumbersToBoard(bool[,] board)
-        {
-            for (int r = 0; r < board.GetLength(0); r++)
-            {
-                for (int c = 0; c < board.GetLength(1); c++)
-                {
-                    appL.ModifyButtonContent(boardGrid,r,c,gmL.MineRadar(board,r,c).ToString());
-                }
-            }
         }
 
         /// <summary>
@@ -123,7 +143,7 @@ namespace MineSeeperProject
                 for (int c = col - 1; c <= col + 1; c++)
                 {
                     Button btn  = appL.FindButton(bGrid, r, c);
-                    if (btn != null)
+                    if (btn != null && !(btn.Content is Image))
                     {
                         btn.Content = gmL.MineRadar(board, r, c).ToString();
                     }
@@ -131,12 +151,12 @@ namespace MineSeeperProject
             }
         }
 
-        ////// <summary>
+        /// <summary>
         /// Check Adjacent 0's
         /// </summary>
-        /// <param name="Count"></param>
-        /// <param name="Row"></param>
-        /// <param name="Col"></param>
+        /// <param name="count"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
         /// <param name="board"></param>
         /// <param name="bGrid"></param>
         public void CellWithZeros(int count, int row, int col, bool[,] board, Grid bGrid)
