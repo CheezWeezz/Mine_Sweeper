@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows;
 using MineSeeperProject;
+using System.Diagnostics;
 
 public class MSBoard : Grid
 {
@@ -11,51 +12,49 @@ public class MSBoard : Grid
     private const int rowHeight = CellSize;
     private const int colWidth = CellSize;
 
-    public int RowCount {  get; }
-    public int ColCount { get; }
+    public int RowCount { get; set; }
+    public int ColCount { get; set; }
     public int CurrentDiff { get; }
 
-	public MSBoard(int row, int col, int diff)
+	public MSBoard(int diff)
 	{
-		this.RowCount = row;
-		this.ColCount = col;
         this.CurrentDiff = diff;
+        FieldSizeForDiff();
 
-        for (int r = 0; r < row; r++)
+        for (int r = 0; r < RowCount; r++)
         {
             this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(rowHeight) });
-            for (int c = 0; c < col; c++)
+            for (int c = 0; c < ColCount; c++)
             {
                 this.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(colWidth) });
             }
         }
+
+        AddingCell();
+        AddingBomb();
     }
 
     public void DisableButton(int row, int col)
     {
-        foreach (var child in this.Children)
+        MSCell cell = FindButton(row, col);
+        if (cell != null)
         {
-            var cell = this.Children
-                    .OfType<MSCell>()
-                    .FirstOrDefault(b => Grid.GetRow(b) == row && Grid.GetColumn(b) == col);
-
-            if (cell != null)
-            {
-                cell.IsEnabled = false;
-            }
+            cell.IsEnabled = false;
         }
     }
     public MSCell FindButton(int row, int col)
     {
         foreach (var child in this.Children)
         {
-            var cell = this.Children
-                    .OfType<MSCell>()
-                    .FirstOrDefault(b => Grid.GetRow(b) == row && Grid.GetColumn(b) == col);
-
-            if (cell != null)
+            if (child is MSCell cell)
             {
-                return cell;
+                int r = MSBoard.GetRow(cell);
+                int c = MSBoard.GetColumn(cell);
+
+                if (r == row && c == col)
+                {
+                    return cell;
+                }
             }
         }
         return null;
@@ -116,44 +115,34 @@ public class MSBoard : Grid
             }
         }
     }
-    public void BoardInit(int difLevel)
+    public void AddingBomb()
     {
         Random rdm = new Random();
-        int[] mines = new int[lvl[difLevel]];
 
-        //Picking random locations for mines
-        for (int i = 0; i < lvl[difLevel]; i++)
+        for (int i = 0; i < lvl[CurrentDiff]; i++)
         {
-            int currentNum = rdm.Next(this.RowCount * this.ColCount);
-            if (mines.Contains(currentNum))
+            int row = rdm.Next(this.RowCount);
+            int col = rdm.Next(this.ColCount);
+            MSCell cell = FindButton(row, col);
+            if (cell.isBomb == true)
             {
                 i--;
             }
             else
             {
-                mines[i] = currentNum;
+                cell.isBomb = true;
             }
-        }
-        Array.Sort(mines);
-
-        //Placing mines on the board
-        for (int i = 0; i < mines.Length; i++)
-        {
-            int row = mines[i] / 8;
-            int col = mines[i] - (row * 8);
-            MSCell cell = FindButton(row, col);
-            cell.isBomb = true;
         }
         AddBombCount();
 
     }
 
-    public void BoardSetup(bool[,] mineField)
+    public void AddingCell()
     {
         int countForId = 0;
         for (int r = 0; r < this.RowCount; r++)
         {
-            for (int c = 0; c < this.RowCount; c++)
+            for (int c = 0; c < this.ColCount; c++)
             {
                 countForId++;
                 MSCell cell = new MSCell(countForId, r, c);
@@ -258,6 +247,25 @@ public class MSBoard : Grid
                     this.DisableButton(row, col);
                 }
             }
+        }
+    }
+
+    private void FieldSizeForDiff()
+    {
+        switch (CurrentDiff)
+        {
+            case 0:
+                RowCount = 8;
+                ColCount = 8;
+                break;
+            case 1:
+                RowCount = 16;
+                ColCount = 16;
+                break;
+            case 2:
+                RowCount = 16;
+                ColCount = 30;
+                break;
         }
     }
 }

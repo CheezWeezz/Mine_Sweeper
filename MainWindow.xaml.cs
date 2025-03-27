@@ -27,26 +27,50 @@ namespace MineSeeperProject
         public const int m_Flag = 2;
         public const int m_Bomb = 3;
 
-        public bool[,] mineField;
         public static int mineFlag;
-        public int diffLvl = 0;
+        public static int diffLvl = 0;
 
-        GameLogic gmL = new GameLogic();
-        MSBoard gameBoard;
+        MSBoard gBoard;
+        MSMenuBar menuBar;
+        Canvas canvas;
 
         public MainWindow()
         {
-            mineField = new bool[8, 8];
-            gameBoard = new MSBoard(mineField.GetLength(0), mineField.GetLength(1), diffLvl);
-            mineFlag = 0;
+            NewGame();
+
             InitializeComponent();
 
-            //Put the mines on the board
-            gameBoard.BoardSetup(mineField);
-            gameBoard.BoardInit(diffLvl);
+            this.Loaded += MainWindow_Loaded;
+        }
 
-            //Make the grid
-            boardGrid.Children.Add(gameBoard);
+        private void NewGame()
+        {
+            canvas = new Canvas();
+            gBoard = new MSBoard(diffLvl);
+            menuBar = new MSMenuBar(this);
+            mineFlag = 0;
+            menuBar.NewGameClicked += NewGame;
+            canvas.Children.Add(menuBar);
+            Canvas.SetTop(gBoard, 30);
+            canvas.Children.Add(gBoard);
+            this.Content = canvas;
+        }
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Force a layout update to ensure canvas has measured its content
+            this.UpdateLayout();
+
+            // Now that the layout is updated, use ActualWidth and ActualHeight
+            double contentWidth = canvas.ActualWidth;
+            double contentHeight = canvas.ActualHeight;
+
+            // Adjust the window size based on canvas size, with added padding
+            this.Width = contentWidth + 20;  // Optional padding
+            this.Height = contentHeight + 50;  // Optional padding
+
+            // You can also set MinWidth and MinHeight to avoid the window shrinking too small
+            this.MinWidth = contentWidth + 20;
+            this.MinHeight = contentHeight + 50;
         }
     }
 }

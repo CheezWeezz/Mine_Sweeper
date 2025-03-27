@@ -5,9 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MineSeeperProject"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Grid Background="#FFFFFFEB" Margin="0,18,0,0" d:IsLocked="True"/>
-        <Grid x:Name="boardGrid" Margin="136,32,136,13" Background="#FFC3C0C0"/>
-    </Grid>
+        Title="Mine Sweeper">
 </Window>
