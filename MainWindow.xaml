@@ -8,10 +8,6 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid Background="#FFFFFFEB" Margin="0,18,0,0" d:IsLocked="True"/>
-        <Menu Margin="0,0,0,416" Background="#FF4E4E4E" Foreground="White" d:IsLocked="True">
-            <MenuItem Header="File"/>
-            <MenuItem Header="New Game" Click="MenuItem_Click"/>
-        </Menu>
         <Grid x:Name="boardGrid" Margin="136,32,136,13" Background="#FFC3C0C0"/>
     </Grid>
 </Window>

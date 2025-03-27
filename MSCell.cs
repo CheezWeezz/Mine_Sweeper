@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using MineSeeperProject;
 
 public class MSCell : Button
 {
-	private const int c_Empty = 0;
-    private const int c_Count = 1;
-    private const int c_Flag = 2;
-    private const int c_Bomb = 3;
-
     private const string flagIcon = "Images\\flag.png";
     private const string bombIcon = "Images\\bomb.png";
 
@@ -34,22 +30,22 @@ public class MSCell : Button
 
         switch (Content)
         {
-            case c_Empty:
+            case MainWindow.m_Empty:
                 this.Content = "";
-                this.currentContent = c_Empty;
+                this.currentContent = MainWindow.m_Empty;
                 break;
-            case c_Count:
+            case MainWindow.m_Count:
                 this.Content = bombArroundCount;
-                this.currentContent = c_Count;
+                this.currentContent = MainWindow.m_Count;
                 break;
-            case c_Flag:
+            case MainWindow.m_Flag:
                 img.Source = new BitmapImage(new Uri(flagIcon, UriKind.Relative));
-                this.currentContent = c_Flag;
+                this.currentContent = MainWindow.m_Flag;
                 this.Content = img;
                 break;
-            case c_Bomb:
+            case MainWindow.m_Bomb:
                 img.Source = new BitmapImage(new Uri(bombIcon, UriKind.Relative));
-                this.currentContent = c_Bomb;
+                this.currentContent = MainWindow.m_Bomb;
                 this.Content = img;
                 break;
             default:
