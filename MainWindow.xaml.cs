@@ -18,49 +18,66 @@ namespace MineSeeperProject
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string flagIcon = "Images\\flag.png";
-
         GameLogic gmL = new GameLogic();
-        InterfaceHandling appL = new InterfaceHandling();
+        MSBoard gameBoard;
+
+        private readonly int c_Empty = 0;
+        private readonly int c_Count = 1;
+        private readonly int c_Flag = 2;
+        private readonly int c_Bomb = 3;
 
         private const int CellSize = 35;
         private const int rowHeight = CellSize;
         private const int colWidth = CellSize;
         private bool[,] mineField;
-        public static int mineCountDisc;
+        public static int mineFlag;
+        int diffLvl = 0;
 
         public MainWindow()
         {
             mineField = new bool[8, 8];
-            mineCountDisc = 0;
+            gameBoard = new MSBoard(mineField.GetLength(0), mineField.GetLength(1));
+            mineFlag = 0;
             InitializeComponent();
+
+            //Put the mines on the board
+            gmL.BoardInit(mineField, diffLvl);
+
+            //Make the grid
+            gameBoard = BoardSetup(mineField.GetLength(0), mineField.GetLength(1));
+            boardGrid.Children.Add(gameBoard);
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            mineField = new bool[8, 8];
+            mineFlag = 0;
+            InitializeComponent();
+
+            //Put the mines on the board
+            gmL.BoardInit(mineField, diffLvl);
 
             //Make the grid
             boardGrid.Children.Add(BoardSetup(mineField.GetLength(0), mineField.GetLength(1)));
-            //Put the mines on the board
-            gmL.BoardInit(mineField, 0);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Button clickedButton = sender as Button;
-            var tag = clickedButton.Tag as Tuple<int, int>;
-            if (tag != null)
-            {
-                int row = tag.Item1;
-                int col = tag.Item2;
-                //updating my world variable
-                InterfaceHandling.m_currentCellRow = tag.Item1;  // Row value
-                InterfaceHandling.m_currentCellCol = tag.Item2;  // Column value
-                GameLogic.m_MineCheck = true;
-                appL.EndGame(boardGrid, mineField, gmL.GameOverCheck(mineField));
+            MSCell cell = sender as MSCell;
 
-                if (gmL.MineRadar(mineField, row, col) == 0)
+            if (cell != null)
+            {
+                int row = cell.row;
+                int col = cell.col;
+
+                if (cell.bombArroundCount == 0)
                 {
-                    CellWithZeros(gmL.MineRadar(mineField, row, col), row, col, mineField, boardGrid);
+                    CellWithZeros(cell.bombArroundCount, row, col, mineField);
                 }
-                RevealNumbersAround(boardGrid,mineField,row,col);
-                appL.DisableButton(boardGrid,row,col);
+                RevealNumbersAround(mineField,row,col);
+                gameBoard.DisableButton(row,col);
+                gameBoard.EndGame(mineField, GameOverCheck(mineField, row, col));
+                CheckForWin(mineField, diffLvl);
             }
         }
 
@@ -68,84 +85,66 @@ namespace MineSeeperProject
         {
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                Button clickedButton = sender as Button;
-                var tag = clickedButton.Tag as Tuple<int, int>;
-                if (tag != null)
+                MSCell cell = sender as MSCell;
+                if (cell != null)
                 {
-                    int row = tag.Item1;
-                    int col = tag.Item2;
+                    int row = cell.row;
+                    int col = cell.col;
 
-                    Image img = new Image();
-                    img.Source = new BitmapImage(new Uri(flagIcon, UriKind.Relative));
-
-                    if (clickedButton.Content is Image)
+                    if (cell.currentContent == c_Flag)
                     {
-                        if (appL.IsArroundDisable(boardGrid,row,col))
+                        if (gameBoard.IsArroundDisable(row,col))
                         {
-                            clickedButton.Content = gmL.MineRadar(mineField, row, col);
+                            cell.SwitchContent(c_Count);
                         }
                         else
                         {
-                            clickedButton.Content = "";
+                            cell.SwitchContent(c_Empty);
                         }
-                        mineCountDisc--;
+                        mineFlag--;
                     }
                     else
                     {
-                        clickedButton.Content = img;
-                        mineCountDisc++;
+                        cell.SwitchContent(c_Flag);
+                        mineFlag++;
                     }
                 }
             }
+            CheckForWin(mineField, diffLvl);
         }
 
-        /// <summary>
-        /// Create a grid with buttons for a game board
-        /// </summary>
-        /// <param name="bRow"></param>
-        /// <param name="bCol"></param>
-        /// <returns>Grid</returns>
-        public Grid BoardSetup(int bRow, int bCol)
+        public MSBoard BoardSetup(int bRow, int bCol)
         {
-            Grid bGrid = new Grid();
+            MSBoard bGrid = new MSBoard(bRow,bCol);
+            int countForId = 0;
             for (int r = 0; r < bRow; r++)
             {
-                bGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(rowHeight) });
                 for (int c = 0; c < bCol; c++)
                 {
-                    bGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(colWidth) });
-                    Button btn = new Button
-                    {
-                        Name = $"btn_{r}_{c}"
-                    };
-                    Grid.SetRow(btn, r);
-                    Grid.SetColumn(btn, c);
-                    btn.Tag = new Tuple<int, int>(r, c);
-                    btn.Click += Button_Click;
-                    btn.MouseDown += Button_MouseDown;
-                    bGrid.Children.Add(btn);
+                    countForId++;
+                    MSCell cell = new MSCell(countForId, r, c);
+                    MSBoard.SetRow(cell, r);
+                    MSBoard.SetColumn(cell, c);
+                    cell.bombArroundCount = gmL.MineRadar(mineField,r,c);
+                    cell.isBomb = mineField[r, c];
+                    cell.Click += Button_Click;
+                    cell.MouseDown += Button_MouseDown;
+                    bGrid.Children.Add(cell);
                 }
             }
             return bGrid;
         }
 
-        /// <summary>
-        /// Look for mine arround the Selected index
-        /// </summary>
-        /// <param name="board"></param>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <returns>Int</returns>
-        public void RevealNumbersAround(Grid bGrid, bool[,] board, int row, int col)
+        public void RevealNumbersAround(bool[,] board, int row, int col)
         {
             for (int r = row - 1; r <= row + 1; r++)
             {
                 for (int c = col - 1; c <= col + 1; c++)
                 {
-                    Button btn  = appL.FindButton(bGrid, r, c);
-                    if (btn != null && !(btn.Content is Image))
+                    MSCell cell  = gameBoard.FindButton(r, c);
+                    if (cell != null && !(cell.Content is Image))
                     {
-                        btn.Content = gmL.MineRadar(board, r, c).ToString();
+                        cell.SwitchContent(c_Count);
                     }
                 }
             }
@@ -159,23 +158,49 @@ namespace MineSeeperProject
         /// <param name="col"></param>
         /// <param name="board"></param>
         /// <param name="bGrid"></param>
-        public void CellWithZeros(int count, int row, int col, bool[,] board, Grid bGrid)
+        public void CellWithZeros(int count, int row, int col, bool[,] board)
         {
 
             for (int r = row - 1; r <= row + 1; r++)
             {
                 for (int c = col - 1; c <= col + 1; c++)
                 {
-                    Button currentbtn = appL.FindButton(bGrid, r, c);
-                    if (currentbtn != null)
+                    MSCell cell = gameBoard.FindButton(r, c);
+                    if (cell != null)
                     {
-                        if (gmL.MineRadar(board, r, c) == 0 && currentbtn.IsEnabled == true)
+                        if (cell.bombArroundCount == 0 && cell.IsEnabled == true)
                         {
-                            currentbtn.Content = gmL.MineRadar(board, r, c).ToString();
-                            RevealNumbersAround(boardGrid,mineField,r,c);
-                            appL.DisableButton(bGrid, r, c);
-                            CellWithZeros(count, r, c, board, bGrid);
+                            cell.SwitchContent(c_Count);
+                            RevealNumbersAround(mineField,r,c);
+                            gameBoard.DisableButton(r, c);
+                            CellWithZeros(count, r, c, board);
                         }
+                    }
+                }
+            }
+        }
+
+        public bool GameOverCheck(bool[,] board, int row, int col)
+        {
+            MSCell cell = gameBoard.FindButton(row, col);
+
+            if (cell.isBomb)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void CheckForWin(bool[,] board, int diff)
+        {
+            int boardSize = gameBoard.RowCount * gameBoard.ColCount - gmL.lvl[diff];
+            if (gameBoard.DisableCount(board) == boardSize && mineFlag == gmL.lvl[diff])
+            {
+                for (int row = 0; row < board.GetLength(0); row++)
+                {
+                    for (int col = 0; col < board.GetLength(1); col++)
+                    {
+                        gameBoard.DisableButton(row, col);
                     }
                 }
             }

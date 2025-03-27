@@ -9,10 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\bomb.png" />
     <None Remove="Images\flag.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Images\bomb.png" />
     <Content Include="Images\flag.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

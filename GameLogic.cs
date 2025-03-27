@@ -6,8 +6,7 @@ using System.Windows.Media.Animation;
 
 public class GameLogic
 {
-    public static bool m_MineCheck = false;
-    private readonly int[] lvl = { 10, 40, 99 };
+    public readonly int[] lvl = { 10, 40, 99 };
 
     /// <summary>
     /// Initializes the board with mines
@@ -22,16 +21,24 @@ public class GameLogic
         //Picking random locations for mines
         for (int i = 0; i < lvl[difLevel]; i++)
 		{
-			mines[i] = rdm.Next(board.GetLength(0) * board.GetLength(1));
-		}
+			int currentNum = rdm.Next(board.GetLength(0) * board.GetLength(1));
+            if (mines.Contains(currentNum))
+            {
+                i--;
+            }
+            else
+            {
+                mines[i] = currentNum;
+            }
+        }
         Array.Sort(mines);
-
         //Placing mines on the board
         for (int i = 0; i < mines.Length; i++)
         {
             int row = mines[i] / 8;
             int col = mines[i] - (row * 8);
             board[row, col] = true;
+            System.Diagnostics.Debug.WriteLine(row + "," + col + " = " + mines[i]);
         }
         ;
 
@@ -61,25 +68,5 @@ public class GameLogic
             }
         }
         return count;
-    }
-
-    /// <summary>
-    /// Check if a mine as been clicked
-    /// </summary>
-    /// <param name="board"></param>
-    public bool GameOverCheck(bool[,] board)
-    {
-        int row = InterfaceHandling.m_currentCellRow;
-        int col = InterfaceHandling.m_currentCellCol;
-
-        if (m_MineCheck == true)
-        {
-            if (board[row,col])
-            {
-                return true;
-            }
-            m_MineCheck = false;
-        }
-        return false;
     }
 }
