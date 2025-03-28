@@ -57,6 +57,7 @@ namespace MineSeeperProject
 
             this.Content = Panel;
             this.SizeToContent = SizeToContent.WidthAndHeight;
+            this.ResizeMode = ResizeMode.NoResize;
         }
     }
 }

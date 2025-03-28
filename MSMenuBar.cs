@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using MineSeeperProject;
@@ -33,9 +34,7 @@ public class MSMenuBar : Menu
         };
 
         this.Items.Add(game);
-        this.Items.Add(exit);
-
-
+        this.Items.Add(exit); 
     }
     private void HandleOptionSelected(MenuItem selectedOption)
     {

@@ -190,20 +190,6 @@ public class MSBoard : Grid
         }
         return count;
     }
-    public void RevealNumbersAround(int row, int col)
-    {
-        for (int r = row - 1; r <= row + 1; r++)
-        {
-            for (int c = col - 1; c <= col + 1; c++)
-            {
-                MSCell cell = FindButton(r, c);
-                if (cell != null && !(cell.Content is Image))
-                {
-                    cell.SwitchContent(MainWindow.m_Count);
-                }
-            }
-        }
-    }
     public void CellWithZeros(int count, int row, int col)
     {
 
@@ -217,7 +203,6 @@ public class MSBoard : Grid
                     if (cell.bombArroundCount == 0 && cell.IsEnabled == true)
                     {
                         cell.SwitchContent(MainWindow.m_Count);
-                        RevealNumbersAround(r, c);
                         DisableButton(r, c);
                         CellWithZeros(count, r, c);
                     }

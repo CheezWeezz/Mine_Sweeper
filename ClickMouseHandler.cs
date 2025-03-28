@@ -24,8 +24,8 @@ public class ClickMouseHandler
                     {
                         gBoard.CellWithZeros(cell.bombArroundCount, row, col);
                     }
-                    gBoard.RevealNumbersAround(row, col);
                     gBoard.DisableButton(row, col);
+                    cell.SwitchContent(MainWindow.m_Count);
                     gBoard.EndGame(gBoard.GameOverCheck(row, col));
                 }
             }
