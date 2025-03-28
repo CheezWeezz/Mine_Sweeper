@@ -35,14 +35,7 @@ public class ClickMouseHandler
                 {
                     if (cell.currentContent == MainWindow.m_Flag)
                     {
-                        if (gBoard.IsArroundDisable(row, col))
-                        {
-                            cell.SwitchContent(MainWindow.m_Count);
-                        }
-                        else
-                        {
-                            cell.SwitchContent(MainWindow.m_Empty);
-                        }
+                        cell.SwitchContent(MainWindow.m_Empty);
                         MainWindow.mineFlag--;
                     }
                     else

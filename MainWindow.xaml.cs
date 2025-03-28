@@ -18,7 +18,7 @@ namespace MineSeeperProject
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int CellSize = 35;
+        private const int CellSize = 32;
         private const int rowHeight = CellSize;
         private const int colWidth = CellSize;
 

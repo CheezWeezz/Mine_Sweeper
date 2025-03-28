@@ -10,14 +10,55 @@
 
   <ItemGroup>
     <None Remove="Images\bomb.png" />
+    <None Remove="Images\Empty.png" />
+    <None Remove="Images\EmptyDis.png" />
     <None Remove="Images\flag.png" />
+    <None Remove="Images\Mine.png" />
+    <None Remove="Images\Num1.png" />
+    <None Remove="Images\Num2.png" />
+    <None Remove="Images\Num3.png" />
+    <None Remove="Images\Num4.png" />
+    <None Remove="Images\Num5.png" />
+    <None Remove="Images\Num6.png" />
+    <None Remove="Images\Num7.png" />
+    <None Remove="Images\Num8.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Images\bomb.png">
+    <Content Include="Images\Empty.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\flag.png">
+    <Content Include="Images\EmptyDis.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Flag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Mine.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Num1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Num2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Num3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Num4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Num5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Num6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Num7.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Num8.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

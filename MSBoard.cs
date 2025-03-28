@@ -8,7 +8,7 @@ public class MSBoard : Grid
 {
     public readonly int[] lvl = { 10, 40, 99 };
 
-    private const int CellSize = 35;
+    private const int CellSize = 32;
     private const int rowHeight = CellSize;
     private const int colWidth = CellSize;
 
@@ -59,26 +59,6 @@ public class MSBoard : Grid
         }
         return null;
     }
-
-    public bool IsArroundDisable(int row, int col)
-    {
-        MSCell centerCell = FindButton(row, col);
-        for (int r = row - 1; r <= row + 1; r++)
-        {
-            for (int c = col - 1; c <= col + 1; c++)
-            {
-                MSCell cell = FindButton(r, c);
-
-                if (cell != null && !cell.IsEnabled && centerCell.id != cell.id)
-                {
-                    return true;
-                }
-
-            }
-        }
-        return false;
-    }
-
     public int DisableCount()
     {
         int count = 0;
