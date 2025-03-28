@@ -28,13 +28,7 @@ public class MSMenuBar : Menu
         game.Items.Add(medium);
         game.Items.Add(hard);
 
-        MenuItem exit = new MenuItem() { Header = "Exit" };
-        exit.Click += (sender, args) => {
-            mainWindow.Close();
-        };
-
         this.Items.Add(game);
-        this.Items.Add(exit); 
     }
     private void HandleOptionSelected(MenuItem selectedOption)
     {
