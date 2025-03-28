@@ -32,45 +32,31 @@ namespace MineSeeperProject
 
         MSBoard gBoard;
         MSMenuBar menuBar;
-        Canvas canvas;
+        StackPanel Panel;
 
         public MainWindow()
         {
-            NewGame();
-
             InitializeComponent();
 
-            this.Loaded += MainWindow_Loaded;
+            NewGame();
         }
 
         private void NewGame()
         {
-            canvas = new Canvas();
+            Panel = new StackPanel();
+
             gBoard = new MSBoard(diffLvl);
             menuBar = new MSMenuBar(this);
             mineFlag = 0;
+
             menuBar.NewGameClicked += NewGame;
-            canvas.Children.Add(menuBar);
-            Canvas.SetTop(gBoard, 30);
-            canvas.Children.Add(gBoard);
-            this.Content = canvas;
-        }
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Force a layout update to ensure canvas has measured its content
-            this.UpdateLayout();
 
-            // Now that the layout is updated, use ActualWidth and ActualHeight
-            double contentWidth = canvas.ActualWidth;
-            double contentHeight = canvas.ActualHeight;
+            Panel.Children.Add(menuBar);
+            Panel.Children.Add(gBoard);
+            Panel.MaxWidth = CellSize * gBoard.ColCount;
 
-            // Adjust the window size based on canvas size, with added padding
-            this.Width = contentWidth + 20;  // Optional padding
-            this.Height = contentHeight + 50;  // Optional padding
-
-            // You can also set MinWidth and MinHeight to avoid the window shrinking too small
-            this.MinWidth = contentWidth + 20;
-            this.MinHeight = contentHeight + 50;
+            this.Content = Panel;
+            this.SizeToContent = SizeToContent.WidthAndHeight;
         }
     }
 }
